@@ -966,6 +966,11 @@ characters = [
     let usedCharacters = []; // 出題済みのキャラクターを追跡する配列
     let survivalRecoveryRate = 6; // サバイバルモードの初期回復量
 
+    // 右クリックを禁止する
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
+    
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -1067,14 +1072,12 @@ characters = [
             updateLifeBar(); // ライフバーを更新
 
             allButtons.forEach(btn => {
-                if (btn !== button) {
-                    btn.disabled = true;
-                }
+                btn.disabled = true; // 他のボタンを無効化
             });
 
             setTimeout(() => {
                 button.classList.remove('correct');
-                allButtons.forEach(btn => btn.disabled = false);
+                allButtons.forEach(btn => btn.disabled = false); // ボタンを再度有効化
                 loadCharacter();
             }, 1000);
         } else {
