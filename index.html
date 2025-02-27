@@ -1129,6 +1129,16 @@ characters = [
                 endButton.style.backgroundColor = ''; // 元の色に戻す
             }, 1500); // 1.5秒後に元の色に戻す
         }
+
+        // 正解のボタンをオレンジ色にする
+        const correctJob = characters[currentCharacterIndex].job;
+        const buttons = document.querySelectorAll('.choices button');
+        buttons.forEach(button => {
+            if (button.textContent === correctJob) {
+                button.style.backgroundColor = 'orange';
+            }
+        });
+
         setTimeout(() => {
             document.getElementById('gameContainer').style.display = 'none';
             document.getElementById('result').style.display = 'block';
