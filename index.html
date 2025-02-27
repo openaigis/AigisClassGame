@@ -83,13 +83,14 @@
             color: #fff;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* ボタンの影 */
-            transition: background-color 0.1s; /* 色の変更をアニメーション */
+            transition: background-color 0.5s; /* 色の変更をアニメーション */
         }
         .buttons button:hover {
-            background-color: #9557ff;
+            background-color: #5a57ff;
         }
         .buttons button:active {
-            background-color: #9557ff;
+            background-color: #5a57ff;
+            transition: none; /* クリック時には遅延を無効にする */
         }
         
         .horizontal-buttons {
@@ -98,7 +99,7 @@
         }
 
         .horizontal-buttons button {
-            margin: 0 10px; /* ボタン間のスペースを設定 */
+            margin: 0 5px; /* ボタン間のスペースを設定 */
         }
 
 
@@ -146,6 +147,12 @@
             animation: fadeIn 1s; /* フェードインアニメーション */
             text-align: center;
         }
+
+        #pauseCountMessage {
+            font-weight: normal; /* 文字を細字に設定 */
+            font-size: 1em; /* 文字サイズを小さく設定 */
+        }
+
         #result button {
             width: 100px;
             height: 40px;
@@ -161,10 +168,10 @@
             transition: background-color 0.1s; /* 色の変更をアニメーション */
         }
         #result button:hover {
-            background-color: #9557ff;
+            background-color: #5a57ff;
         }
         #result button:active {
-            background-color: #9557ff;
+            background-color: #5a57ff;
         }
         .life-and-score {
             display: flex;
@@ -242,6 +249,7 @@
         <div class="choices" id="choices"></div>
         <div id="message"></div>
         <div class="buttons horizontal-buttons">
+            <button onclick="pauseGame()">一時停止</button> <!-- 一時停止ボタンを追加 -->
             <button onclick="startGame()">スタート</button>
             <button onclick="endGame()">終了</button>
         </div>
@@ -250,11 +258,12 @@
         <h1>リザルト画面</h1>
         <p id="resultMessage" class="result-message">ここに結果を表示します。</p> <!-- 正解回数を表示する要素 -->
         <p id="modeMessage" class="result-message">ここにゲームモードを表示します。</p> <!-- ゲームモードを表示する要素 -->
+        <p id="pauseCountMessage" class="result-message">ここに一時停止回数を表示します。</p> <!-- 一時停止回数を表示する要素 -->
         <button onclick="resetGame()">再スタート</button>
     </div>
     <script>
 characters = [
-    {'name': 'アルティア', 'job': 'ソルジャー'},
+{'name': 'アルティア', 'job': 'ソルジャー'},
     {'name': 'マルゴット', 'job': 'ソルジャー'},
     {'name': 'アサル', 'job': 'ソルジャー'},
     {'name': 'アリア', 'job': 'ソルジャー'},
@@ -994,19 +1003,19 @@ characters = [
 
         document.getElementById('character').textContent = characters[currentCharacterIndex].name;
 
-        let choices = characters.map(character => character.job);
-        shuffle(choices);
-
-        // 正解のjobをランダムな位置に挿入
-        const correctJob = characters[currentCharacterIndex].job;
-        if (!choices.slice(0, 10).includes(correctJob)) {
-            const randomPosition = Math.floor(Math.random() * 10);
-            choices[randomPosition] = correctJob;
+        // 正解のjobを含む選択肢を作成
+        let choices = [characters[currentCharacterIndex].job];
+        while (choices.length < 10) {
+            const randomJob = characters[Math.floor(Math.random() * characters.length)].job;
+            if (!choices.includes(randomJob)) {
+                choices.push(randomJob);
+            }
         }
+        shuffle(choices);
 
         const choicesContainer = document.getElementById('choices');
         choicesContainer.innerHTML = '';
-        choices.slice(0, 10).forEach(choice => {
+        choices.forEach(choice => {
             const button = document.createElement('button');
             button.textContent = choice;
             button.onclick = () => checkAnswer(choice, button);
@@ -1107,6 +1116,12 @@ characters = [
         document.getElementById('score').textContent = correctCount;
         loadCharacter();
         startLifePointReduction(); // ライフポイントの減少を開始
+
+        // スタートボタンを無効化
+        const startButton = document.querySelector('.horizontal-buttons button[onclick="startGame()"]');
+        if (startButton) {
+            startButton.disabled = true;
+        }
     }
 
     function startLifePointReduction() {
@@ -1143,6 +1158,7 @@ characters = [
             document.getElementById('result').style.display = 'block';
             document.getElementById('resultMessage').textContent = `正解回数: ${correctCount}`; // 正解回数を表示
             document.getElementById('modeMessage').textContent = `${gameMode}`; // ゲームモードを表示
+            document.getElementById('pauseCountMessage').textContent = `一時停止: ${pauseCount}`; // 一時停止回数を表示
         }, 1800); // 1.8秒の遅延を追加
     }
 
@@ -1157,6 +1173,20 @@ characters = [
         document.getElementById('result').style.display = 'none';
         document.getElementById('modeSelection').style.display = 'block';
         clearInterval(window.lifePointInterval); // リセット時にインターバルをクリア
+        
+        // 一時停止ボタンの状態をリセット
+        const pauseButton = document.querySelector('.horizontal-buttons button[onclick="pauseGame()"]');
+        if (pauseButton) {
+            pauseButton.style.backgroundColor = ''; // 元の色に戻す
+        }
+        isPaused = false; // 一時停止状態をリセット
+        pauseCount = 0; // 一時停止回数をリセット
+
+        // スタートボタンを有効化
+        const startButton = document.querySelector('.horizontal-buttons button[onclick="startGame()"]');
+        if (startButton) {
+            startButton.disabled = false;
+        }
     }
 
     function showManual() {
@@ -1168,6 +1198,33 @@ characters = [
         document.getElementById('manualContainer').style.display = 'none';
         document.getElementById('modeSelection').style.display = 'block';
     }
+
+    let isPaused = false; // 一時停止状態を管理する変数
+    let pauseCount = 0; // 一時停止ボタンを押した回数をカウントする変数
+
+    function pauseGame() {
+        const pauseButton = document.querySelector('.horizontal-buttons button[onclick="pauseGame()"]');
+        const answerButtons = document.querySelectorAll('.choices button');
+        if (isPaused) {
+            // ゲームを再開する
+            startLifePointReduction();
+            if (pauseButton) {
+                pauseButton.style.backgroundColor = ''; // 元の色に戻す
+            }
+            answerButtons.forEach(button => button.disabled = false); // ボタンを有効にする
+            isPaused = false;
+        } else {
+            // ゲームを一時停止する
+            clearInterval(window.lifePointInterval); // ライフポイントの減少を停止
+            if (pauseButton) {
+                pauseButton.style.backgroundColor = 'red';
+            }
+            answerButtons.forEach(button => button.disabled = true); // ボタンを無効にする
+            isPaused = true;
+            pauseCount++; // 一時停止ボタンを押した回数を増やす
+        }
+    }
+
 </script>
 </body>
 </html>
