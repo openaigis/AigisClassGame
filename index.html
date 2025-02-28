@@ -1051,7 +1051,13 @@ characters = [
         // ライフポイントが0になったらゲームオーバー
         if (lifePoints <= 0) {
             endGame();
+            disableAnswerButtons(); // 回答ボタンを無効にする
         }
+    }
+
+    function disableAnswerButtons() {
+        const answerButtons = document.querySelectorAll('.choices button');
+        answerButtons.forEach(button => button.disabled = true);
     }
 
     function checkAnswer(choice, button) {
