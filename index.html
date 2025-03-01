@@ -229,8 +229,9 @@
         <h1>詳細</h1>
         <ul>
             <li><strong>90秒トライアル</strong> - 持ち時間は90秒で、誤答ペナルティは3秒です。慎重に行くか早く行くかはお好みで。</li>
-            <li><strong>無限チャレンジ</strong> - 持ち時間は30秒ですが、正解するごとに6秒増えるようになります。ただし1回ごとに増える量は少し減ります。持ち時間の最大は90秒。</li>
-            <li><strong>ワンミス終了</strong> - 増える量は6秒で固定です。ただしワンミスでゲーム終了です。被ることはないはずなので、問題が尽きたら終了です。多分704問くらい？</li>
+            <li><strong>サバイバル</strong> - 持ち時間は30秒ですが、正解するごとに6秒増えるようになります。ただし1回ごとに増える量は少し減ります。持ち時間の最大は90秒。</li>
+            <li><strong>ワンミス終了</strong> - 増える量は6秒で固定です。ただしワンミスでゲーム終了です。被ることはないはずなので、問題が尽きたら終了です。多分703問くらい？</li>
+            <li><strong>一時停止ボタン</strong> - その名の通り。一応カウントはリザルトに出ます。</li>
         </ul>
         <div class="buttons">
             <button onclick="showModeSelection()">戻る</button>
@@ -255,7 +256,7 @@
         </div>
     </div>
     <div id="result" style="display:none;">
-        <h1>リザルト画面</h1>
+        <h1>リザルト</h1>
         <p id="resultMessage" class="result-message">ここに結果を表示します。</p> <!-- 正解回数を表示する要素 -->
         <p id="modeMessage" class="result-message">ここにゲームモードを表示します。</p> <!-- ゲームモードを表示する要素 -->
         <p id="pauseCountMessage" class="result-message">ここに一時停止回数を表示します。</p> <!-- 一時停止回数を表示する要素 -->
@@ -263,7 +264,7 @@
     </div>
     <script>
 characters = [
-{'name': 'アルティア', 'job': 'ソルジャー'},
+    {'name': 'アルティア', 'job': 'ソルジャー'},
     {'name': 'マルゴット', 'job': 'ソルジャー'},
     {'name': 'アサル', 'job': 'ソルジャー'},
     {'name': 'アリア', 'job': 'ソルジャー'},
