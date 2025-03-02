@@ -607,7 +607,7 @@ characters = [
     {'name': 'ユリナ', 'job': 'ダークファイター'},
     {'name': 'エルヴァ', 'job': 'ダークファイター'},
     {'name': 'ダルク', 'job': 'ダークファイター'},
-    {'name': 'ダークエルフのロアナ', 'job': 'アベンジャー'},
+    {'name': 'ロアナ', 'job': 'アベンジャー'},
     {'name': 'リスティス', 'job': 'アベンジャー'},
     {'name': 'ナキア', 'job': 'アベンジャー'},
     {'name': 'レティシア', 'job': 'アベンジャー'},
@@ -1071,7 +1071,10 @@ characters = [
                 lifePoints = parseFloat((lifePoints + 0).toFixed(1)); // 90秒トライアルモードでは0ポイント回復
             } else if (gameMode === 'survival') {
                 lifePoints = parseFloat((lifePoints + survivalRecoveryRate).toFixed(1)); // サバイバルモードでは回復量を使用
-                survivalRecoveryRate = parseFloat((survivalRecoveryRate * 0.99).toFixed(1)); // 回復量を0.99倍にする
+                survivalRecoveryRate = parseFloat((survivalRecoveryRate * 0.99).toFixed(2)); // 回復量を0.99倍にする
+                if(survivalRecoveryRate < 0.1){
+                    survivalRecoveryRate = 0.1; //0.1を下限にする
+                }
             } else if (gameMode === 'one-mistake') {
                 lifePoints = parseFloat((lifePoints + 6).toFixed(1)); // ワンミス終了モードでは6ポイント回復
             }
